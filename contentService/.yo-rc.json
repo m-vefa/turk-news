@@ -1,0 +1,21 @@
+{
+  "generator-jhipster": {
+    "applicationIndex": 1,
+    "applicationType": "microservice",
+    "authenticationType": "jwt",
+    "baseName": "contentService",
+    "entities": [],
+    "jhipsterVersion": "8.11.0",
+    "jwtSecretKey": "Zjk2Y2MzN2UxNzM3YjlhZTljNjA2MWZmMmRkOWMyOTM4NjQyODE3MzRiYTMzYmYxY2Y0MjcyMTdiMDEyMGRhMGYxNjg1Yzg2OThiYzgyYmEwMDI5YjAwODU5ZjRhMmQwNDJhM2ZlY2UzM2U5Y2EzNjhiNTI5NWI5YTBmMjExNDg=",
+    "languages": ["en"],
+    "monorepository": true,
+    "nativeLanguage": "en",
+    "packageName": "com.newsapp.content",
+    "prodDatabaseType": "mysql",
+    "serverPort": 8081,
+    "serviceDiscoveryType": "eureka",
+    "skipClient": true,
+    "skipCommitHook": true,
+    "skipUserManagement": true
+  }
+}

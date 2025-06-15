@@ -108,6 +108,7 @@ enum LicenseType {
 }
 
 entity Comment {
+  newsId Long  // manual reference to News entity in contentService
   content TextBlob required
   postedAt Instant
   updatedAt Instant
@@ -169,17 +170,14 @@ relationship OneToMany {
   News{translations} to NewsTranslation{news}
   News{category} to Category{news}
   News{media} to Media{news}
-  News{comments} to Comment{news}
   UserProfile{comments} to Comment{author}
   News{author} to Author{articles}
 }
 
-relationship ManyToMany {
-  News{tags} to Tag{news}
-  UserProfile{favorites} to News{favoritedBy}
-}
+// Removed ManyToMany relationship between UserProfile and News
+// You should implement favorites logic using service calls between microservices
 
 dto * with mapstruct
 service * with serviceClass
-paginate * with pagination
+paginate News, Comment, NewsTranslation, Category, Tag, Media, UserProfile, Author, NewsletterSubscriber, AuditLog with pagination
 microservice * with all
