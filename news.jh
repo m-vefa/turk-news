@@ -1,0 +1,185 @@
+application {
+  config {
+    baseName gatewayApp
+    applicationType gateway
+    packageName com.newsapp
+    authenticationType jwt
+    prodDatabaseType mysql
+    clientFramework react
+    serviceDiscoveryType eureka
+  }
+  entities News, NewsTranslation, Category, Tag, Media, Comment, UserProfile, Author, NewsletterSubscriber, AuditLog
+}
+
+application {
+  config {
+    baseName contentService
+    applicationType microservice
+    packageName com.newsapp.content
+    authenticationType jwt
+    prodDatabaseType mysql
+    serviceDiscoveryType eureka
+  }
+  entities News, NewsTranslation, Category, Tag, Media, Author
+}
+
+application {
+  config {
+    baseName userService
+    applicationType microservice
+    packageName com.newsapp.user
+    authenticationType jwt
+    prodDatabaseType mysql
+    serviceDiscoveryType eureka
+  }
+  entities UserProfile, Comment, NewsletterSubscriber, AuditLog
+}
+
+entity News {
+  slug String required minlength(3) unique
+  status NewsStatus required
+  createdAt Instant required
+  updatedAt Instant
+  publishAt Instant
+  viewCount Long
+  likeCount Long
+  shareCount Long
+  isFeatured Boolean required
+  isBreaking Boolean
+  readingTime Integer
+  priority Integer
+  sourceUrl String
+  authorNote String
+}
+enum NewsStatus {
+  DRAFT, REVIEW, SCHEDULED, PUBLISHED, ARCHIVED
+}
+
+entity NewsTranslation {
+  language String required minlength(2) maxlength(5)
+  title String required
+  subtitle String
+  summary TextBlob
+  content TextBlob required
+  seoTitle String maxlength(60)
+  seoDescription String maxlength(160)
+  seoKeywords String maxlength(255)
+  canonicalUrl String
+  readingDirection TextDirection required
+}
+enum TextDirection {
+  LTR, RTL
+}
+
+entity Category {
+  slug String required unique
+  name String required
+  description String
+  icon String
+  color String
+  showInMenu Boolean required
+  sortOrder Integer
+}
+
+entity Tag {
+  name String required minlength(2) unique
+  slug String required unique
+  usageCount Long
+}
+
+entity Media {
+  url String required
+  altText String
+  caption String
+  type MediaType required
+  size Long
+  width Integer
+  height Integer
+  mimeType String
+  uploadedAt Instant
+  credit String
+  license LicenseType
+}
+enum MediaType {
+  IMAGE, VIDEO, AUDIO, DOCUMENT
+}
+enum LicenseType {
+  PUBLIC_DOMAIN, COPYRIGHTED, CC_BY, CC_BY_SA
+}
+
+entity Comment {
+  content TextBlob required
+  postedAt Instant
+  updatedAt Instant
+  status CommentStatus required
+  ipAddress String
+  userAgent String
+  likeCount Long
+  replyTo Long
+  isPinned Boolean
+}
+enum CommentStatus {
+  VISIBLE, PENDING, REPORTED, HIDDEN, DELETED
+}
+
+entity UserProfile {
+  username String required unique
+  displayName String required
+  avatarUrl String
+  bio String
+  website String
+  location String
+  registeredAt Instant
+  preferredLanguage String
+  role UserRole required
+  verified Boolean
+}
+enum UserRole {
+  USER, EDITOR, REVIEWER, ADMIN
+}
+
+entity Author {
+  fullName String required
+  bio TextBlob
+  avatarUrl String
+  isGuest Boolean required
+  linkedUser String
+  socialTwitter String
+  socialLinkedIn String
+  socialWebsite String
+}
+
+entity NewsletterSubscriber {
+  email String required unique
+  subscribedAt Instant
+  isVerified Boolean
+  preferredLanguage String
+}
+
+entity AuditLog {
+  user String
+  action String
+  entityName String
+  entityId Long
+  changedAt Instant
+  changeSummary TextBlob
+}
+
+relationship OneToMany {
+  News{translations} to NewsTranslation{news}
+  News{category} to Category{news}
+  News{media} to Media{news}
+  News{comments} to Comment{news}
+  UserProfile{comments} to Comment{author}
+  News{author} to Author{articles}
+}
+
+relationship ManyToMany {
+  News{tags} to Tag{news}
+  UserProfile{favorites} to News{favoritedBy}
+}
+
+dto * with mapstruct
+service * with serviceClass
+paginate * with pagination
+microservice * with all
